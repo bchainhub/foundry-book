@@ -58,12 +58,12 @@ Whether or not to enable caching. If enabled, the result of compiling sources, t
 
 The path to the cache, relative to the root of the project.
 
-##### `broadprobe`
+##### `broadcast`
 
 - Type: string
-- Default: broadprobe
+- Default: broadcast
 
-The path to the broadprobe transaction logs, relative to the root of the project.
+The path to the broadcast transaction logs, relative to the root of the project.
 
 ##### `force`
 

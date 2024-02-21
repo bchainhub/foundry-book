@@ -124,7 +124,7 @@ If your JSON object has `hex numbers`, they will be encoded as bytes. The way to
 
 ```solidity
 string memory root = vm.projectRoot();
-string memory path = string.concat(root, "/src/test/fixtures/broadprobe.log.json");
+string memory path = string.concat(root, "/src/test/fixtures/broadcast.log.json");
 string memory json = vm.readFile(path);
 bytes memory transactionDetails = json.parseRaw(".transactions[0].tx");
 RawTx1559Detail memory rawTxDetail = abi.decode(transactionDetails, (RawTx1559Detail));
@@ -132,16 +132,16 @@ RawTx1559Detail memory rawTxDetail = abi.decode(transactionDetails, (RawTx1559De
 
 ### Spark script artifacts
 
-We have gone ahead and created a handful of helper struct and functions to read the artifacts from broadprobeing a spark script.
+We have gone ahead and created a handful of helper struct and functions to read the artifacts from broadcasting a spark script.
 
-Currently, we only support artifacts produced by EIP1559-compatible chains and we **don't** support yet the parsing of the entire `broadprobe.json` artifact. You will need to parse for individual values such as the `transactions`, the `receipts`, etc.
+Currently, we only support artifacts produced by EIP1559-compatible chains and we **don't** support yet the parsing of the entire `broadcast.json` artifact. You will need to parse for individual values such as the `transactions`, the `receipts`, etc.
 
 To read the transactions, it's as easy as doing:
 
 ```solidity
 function testReadEIP1559Transactions() public {
     string memory root = vm.projectRoot();
-    string memory path = string.concat(root, "/src/test/fixtures/broadprobe.log.json");
+    string memory path = string.concat(root, "/src/test/fixtures/broadcast.log.json");
     Tx1559[] memory transactions = readTx1559s(path);
 }
 ```

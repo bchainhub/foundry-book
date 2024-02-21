@@ -53,8 +53,8 @@ interface CheatCodes {
     // Possible caller modes for readCallers()
     enum CallerMode {
         None,
-        Broadprobe,
-        RecurrentBroadprobe,
+        Broadcast,
+        RecurrentBroadcast,
         Prank,
         RecurrentPrank
     }
@@ -345,18 +345,18 @@ interface CheatCodes {
     // Using the address that calls the test contract or the address provided
     // as the sender, has the next call (at this call depth only) create a
     // transaction that can later be signed and sent onchain
-    function broadprobe() external;
-    function broadprobe(address) external;
+    function broadcast() external;
+    function broadcast(address) external;
 
     // Using the address that calls the test contract or the address provided
     // as the sender, has all subsequent calls (at this call depth only) create
     // transactions that can later be signed and sent onchain
-    function startBroadprobe() external;
-    function startBroadprobe(address) external;
-    function startBroadprobe(uint256 privateKey) external;
+    function startBroadcast() external;
+    function startBroadcast(address) external;
+    function startBroadcast(uint256 privateKey) external;
 
     // Stops collecting onchain transactions
-    function stopBroadprobe() external;
+    function stopBroadcast() external;
 
     // Reads the entire content of file to string, (path) => (data)
     function readFile(string calldata) external returns (string memory);

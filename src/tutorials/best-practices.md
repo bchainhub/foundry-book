@@ -202,14 +202,14 @@ You should _ensure_ that no _tainted_ data ever reaches a _sink_. That means tha
    - Write your deploy script and scaffold tests by running that script. Then, run all tests against the state resulting from your production deployment script. This is a great way to gain confidence in a deploy script.
    - Within your script itself, use `require` statements (or the `if (condition) revert()` pattern if you prefer) to stop execution of your script if something is wrong. For example, `require(computedAddress == deployedAddress, "address mismatch")`. Using the `assertEq` helpers instead will not stop execution.
 
-1. **Carefully audit which transactions are broadprobe**. Transactions not broadprobe are still executed in the context of a test, so missing broadprobes or extra broadprobes are easy sources of error in the previous step.
+1. **Carefully audit which transactions are broadcast**. Transactions not broadcast are still executed in the context of a test, so missing broadcasts or extra broadcasts are easy sources of error in the previous step.
 
-1. **Watch out for frontrunning**. Spark simulates your script, generates transaction data from the simulation results, then broadprobes the transactions. Make sure your script is robust against chain-state changing between the simulation and broadprobe. A sample script vulnerable to this is below:
+1. **Watch out for frontrunning**. Spark simulates your script, generates transaction data from the simulation results, then broadcasts the transactions. Make sure your script is robust against chain-state changing between the simulation and broadcast. A sample script vulnerable to this is below:
     ```solidity
     // Pseudo-code, may not compile.
     contract VulnerableScript is Script {
        function run() public {
-          vm.startBroadprobe();
+          vm.startBroadcast();
     
           // Transaction 1: Deploy a new Gnosis Safe with CREATE.
           // Because we're using CREATE instead of CREATE2, the address of the new
@@ -219,13 +219,13 @@ You should _ensure_ that no _tainted_ data ever reaches a _sink_. That means tha
           // Transaction 2: Send tokens to the new Safe.
           // We know the address of mySafe is a function of the nonce of the
           // gnosisSafeProxyFactory. If someone else deploys a Gnosis Safe between
-          // the simulation and broadprobe, the address of mySafe will be different,
+          // the simulation and broadcast, the address of mySafe will be different,
           // and this script will send 1000 DAI to the other person's Safe. In this
           // case, we can protect ourselves from this by using CREATE2 instead of
           // CREATE, but every situation may have different solutions.
           dai.transfer(mySafe, 1000e18);
     
-          vm.stopBroadprobe();
+          vm.stopBroadcast();
        }
     }
     ```
@@ -242,9 +242,9 @@ You should _ensure_ that no _tainted_ data ever reaches a _sink_. That means tha
 
 ### Private Key Management
 
-Script execution requires a private key to send transactions. This key controls all funds in the account, so it must be protected carefully. There are a few options for securely broadprobeing transactions through a script:
+Script execution requires a private key to send transactions. This key controls all funds in the account, so it must be protected carefully. There are a few options for securely broadcasting transactions through a script:
 
-1. **Use a hardware wallet.** Hardware wallets such as Ledger and Trezor store seed phrases in a secure enclave. Spark can send a raw transaction to the wallet, and the wallet will sign the transaction. The signed transaction is returned to spark and broadprobeer. This way, private keys never leave the hardware wallet, making this a very secure approach. To use a hardware wallet with scripts, see the `--ledger` and `--trezor` [flags](../reference/spark/spark-script.md).
+1. **Use a hardware wallet.** Hardware wallets such as Ledger and Trezor store seed phrases in a secure enclave. Spark can send a raw transaction to the wallet, and the wallet will sign the transaction. The signed transaction is returned to spark and broadcaster. This way, private keys never leave the hardware wallet, making this a very secure approach. To use a hardware wallet with scripts, see the `--ledger` and `--trezor` [flags](../reference/spark/spark-script.md).
 
 2. **Use a private key directly.** With this approach you expose a private key on your machine, making it riskier than the above option. Therefore the suggested way to directly use a private key is to generate a new wallet for executing the script, and only send that wallet enough funds to run the script. Then, stop using the key after the script is complete. This way, if the key is compromised, only the funds on this throwaway key are lost, as opposed to losing everything in your wallet.
 

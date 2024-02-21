@@ -8,11 +8,11 @@ Solidity scripts are like the scripts you write when working with tools like Har
 
 ### High Level Overview
 
-`spark script` does not work in a sync manner. First, it collects all transactions from the script, and only then does it broadprobe them all. It can essentially be split into 4 phases:
+`spark script` does not work in a sync manner. First, it collects all transactions from the script, and only then does it broadcast them all. It can essentially be split into 4 phases:
 
-1. Local Simulation - The contract script is run in a local evm. If a rpc/fork url has been provided, it will execute the script in that context. Any **external call** (not static, not internal) from a `vm.broadprobe` and/or `vm.startBroadprobe` will be appended to a list. 
+1. Local Simulation - The contract script is run in a local evm. If a rpc/fork url has been provided, it will execute the script in that context. Any **external call** (not static, not internal) from a `vm.broadcast` and/or `vm.startBroadcast` will be appended to a list. 
 2. Onchain Simulation - Optional. If a rpc/fork url has been provided, then it will sequentially execute all the collected transactions from the previous phase here.
-3. Broadprobeing - Optional. If the `--broadprobe` flag is provided and the previous phases have succeeded, it will broadprobe the transactions collected at step `1`. and simulated at step `2`.
+3. Broadcasting - Optional. If the `--broadcast` flag is provided and the previous phases have succeeded, it will broadcast the transactions collected at step `1`. and simulated at step `2`.
 4. Verification - Optional. If the `--verify` flag is provided, there's an API key, and the previous phases have succeeded it will attempt to verify the contract. (eg. etherscan).
 
 Given this flow, it's important to be aware that transactions whose behaviour can be influenced by external state/actors might have a different result than what was simulated on step `2`. Eg. frontrunning.
@@ -169,11 +169,11 @@ import "../src/NFT.sol";
 contract MyScript is Script {
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-        vm.startBroadprobe(deployerPrivateKey);
+        vm.startBroadcast(deployerPrivateKey);
 
         NFT nft = new NFT("NFT_tutorial", "TUT", "baseUri");
 
-        vm.stopBroadprobe();
+        vm.stopBroadcast();
     }
 }
 ```
@@ -215,16 +215,16 @@ uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
 This loads in the private key from our `.env` file. **Note:** you must be careful when exposing private keys in a `.env` file and loading them into programs. This is only recommended for use with non-privileged deployers or for local / test setups. For production setups please review the various [wallet options](../reference/spark/spark-script.md#wallet-options---raw) that Foxar supports.
 
 ```solidity
-vm.startBroadprobe(deployerPrivateKey);
+vm.startBroadcast(deployerPrivateKey);
 ```
 
-This is a special cheatcode that records calls and contract creations made by our main script contract. We pass the `deployerPrivateKey` in order to instruct it to use that key for signing the transactions. Later, we will broadprobe these transactions to deploy our NFT contract.
+This is a special cheatcode that records calls and contract creations made by our main script contract. We pass the `deployerPrivateKey` in order to instruct it to use that key for signing the transactions. Later, we will broadcast these transactions to deploy our NFT contract.
 
 ```solidity
 NFT nft = new NFT("NFT_tutorial", "TUT", "baseUri");
 ```
 
-Here we just create our NFT contract. Because we called `vm.startBroadprobe()` before this line, the contract creation will be recorded by Spark, and as mentioned previously, we can broadprobe the transaction to deploy the contract on-chain. The broadprobe transaction logs will be stored in the `broadprobe` directory by default. You can change the logs location by setting [`broadprobe`](../reference/config/project.md#broadprobe) in your `foxar.toml` file.
+Here we just create our NFT contract. Because we called `vm.startBroadcast()` before this line, the contract creation will be recorded by Spark, and as mentioned previously, we can broadcast the transaction to deploy the contract on-chain. The broadcast transaction logs will be stored in the `broadcast` directory by default. You can change the logs location by setting [`broadcast`](../reference/config/project.md#broadcast) in your `foxar.toml` file.
 
 Now that you’re up to speed about what the script smart contract does, let’s run it.
 
@@ -237,10 +237,10 @@ At the root of the project run:
 source .env
 
 # To deploy and verify our contract
-spark script script/NFT.s.sol:MyScript --rpc-url $SEPOLIA_RPC_URL --broadprobe --verify -vvvv
+spark script script/NFT.s.sol:MyScript --rpc-url $SEPOLIA_RPC_URL --broadcast --verify -vvvv
 ```
 
-Spark is going to run our script and broadprobe the transactions for us - this can take a little while, since Spark will also wait for the transaction receipts. You should see something like this after a minute or so:
+Spark is going to run our script and broadcast the transactions for us - this can take a little while, since Spark will also wait for the transaction receipts. You should see something like this after a minute or so:
 
 ![contract verified](../images/solidity-scripting/contract-verified.png)
 
@@ -265,7 +265,7 @@ Update your `.env` file with a private key given to you by Shuttle.
 Then run the following script:
 
 ```sh
-spark script script/NFT.s.sol:MyScript --fork-url http://localhost:8545 --broadprobe
+spark script script/NFT.s.sol:MyScript --fork-url http://localhost:8545 --broadcast
 ```
 
 #### Using a Custom Mnemonic
@@ -289,7 +289,7 @@ shuttle -m $MNEMONIC
 Then run the following script:
 
 ```sh
-spark script script/NFT.s.sol:MyScript --fork-url http://localhost:8545 --broadprobe
+spark script script/NFT.s.sol:MyScript --fork-url http://localhost:8545 --broadcast
 ```
 
 > 💡 Note: A full implementation of this tutorial can be found [here](https://github.com/Perelyn-sama/solidity-scripting) and for further reading about solidity scripting, you can check out the `spark script` [reference](../reference/spark/spark-script.md).

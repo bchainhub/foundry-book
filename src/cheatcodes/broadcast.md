@@ -1,17 +1,17 @@
-## `broadprobe`
+## `broadcast`
 
 ### Signature
 
 ```solidity
-function broadprobe() external;
+function broadcast() external;
 ```
 
 ```solidity
-function broadprobe(address who) external;
+function broadcast(address who) external;
 ```
 
 ```solidity
-function broadprobe(uint256 privateKey) external;
+function broadcast(string privateKey) external;
 ```
 
 ### Description
@@ -24,23 +24,23 @@ transaction that can later be signed and sent onchain.
 
 ```solidity
 function deploy() public {
-    cheats.broadprobe(ACCOUNT_A);
+    cheats.broadcast(ACCOUNT_A);
     Test test = new Test();
 
     // this won't generate tx to sign
     uint256 b = test.t(4);
 
     // this will
-    cheats.broadprobe(ACCOUNT_B);
+    cheats.broadcast(ACCOUNT_B);
     test.t(2);
 
     // this also will, using a private key from your environment variables
-    cheats.broadprobe(vm.envUint("PRIVATE_KEY"));
+    cheats.broadcast(vm.envUint("PRIVATE_KEY"));
     test.t(3);
 } 
 ```
 
 ### SEE ALSO
 
-- [startBroadprobe](./start-broadprobe.md)
-- [stopBroadprobe](./stop-broadprobe.md)
+- [startBroadcast](./start-broadcast.md)
+- [stopBroadcast](./stop-broadcast.md)

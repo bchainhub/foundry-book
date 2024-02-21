@@ -36,8 +36,8 @@ Options:
           
           This is auto-enabled for common networks without EIP1559.
 
-      --broadprobe
-          Broadprobes the transactions
+      --broadcast
+          Broadcasts the transactions
 
       --skip-simulation
           Skips on-chain simulation
@@ -63,7 +63,7 @@ Options:
       --debug
           Open the script in the debugger.
           
-          Takes precedence over broadprobe.
+          Takes precedence over broadcast.
 
       --slow
           Makes sure a transaction is sent, only after its previous one has been confirmed and succeeded

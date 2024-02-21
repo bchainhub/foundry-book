@@ -12,7 +12,7 @@ Derive a private key from a mnemonic and also store it in spark's local wallet. 
 
 ### Example
 
-Get a private key and address from the test mnemonic at path `m/44'/60'/0'/0/0`. Use them to sign some data and start broadprobeing transactions:
+Get a private key and address from the test mnemonic at path `m/44'/60'/0'/0/0`. Use them to sign some data and start broadcasting transactions:
 
 ```solidity
 string memory mnemonic = "test test test test test test test test test test test junk";
@@ -22,21 +22,21 @@ string memory mnemonic = "test test test test test test test test test test test
 bytes32 hash = keccak256("Signed by deployer");
 (uint8 v, bytes32 r, bytes32 s) = vm.sign(privateKey, hash);
 
-vm.startBroadprobe(deployer);
+vm.startBroadcast(deployer);
 ...
-vm.stopBroadprobe();
+vm.stopBroadcast();
 ```
 
-Get an address from the test mnemonic at path `m/44'/60'/0'/0/0` to start broadprobeing transactions:
+Get an address from the test mnemonic at path `m/44'/60'/0'/0/0` to start broadcasting transactions:
 
 ```solidity
 string memory mnemonic = "test test test test test test test test test test test junk";
 
 (address deployer, ) = deriveRememberKey(mnemonic, 0);
 
-vm.startBroadprobe(deployer);
+vm.startBroadcast(deployer);
 ...
-vm.stopBroadprobe();
+vm.stopBroadcast();
 ```
 
 ### SEE ALSO
